@@ -3,6 +3,10 @@ import os
 import random
 pygame.init()
 
+joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+for joystick in joysticks:
+    joystick.init()
+    
 # Global Constants
 SCREEN_HEIGHT = 850
 SCREEN_WIDTH = 1600
@@ -124,18 +128,31 @@ class Dinosaur:
         if self.step_index >= 10:
             self.step_index = 0
 
-        if userInput[pygame.K_UP] and not self.dino_jump:
-            self.dino_duck = False
-            self.dino_run = False
-            self.dino_jump = True
+        if userInput[pygame.K_UP] and not self.dino_jump:      
+            self.dino_duck = False      
+            self.dino_run = False      
+            self.dino_jump = True      
         elif userInput[pygame.K_DOWN] and not self.dino_jump:
-            self.dino_duck = True
-            self.dino_run = False
-            self.dino_jump = False
-        elif not (self.dino_jump or userInput[pygame.K_DOWN]):
-            self.dino_duck = False
-            self.dino_run = True
-            self.dino_jump = False
+            self.dino_duck = True      
+            self.dino_run = False      
+            self.dino_jump = False      
+        elif not (self.dino_jump or userInput[pygame.K_DOWN]):      
+            self.dino_duck = False      
+            self.dino_run = True      
+            self.dino_jump = False      
+        if len (joysticks) > 0: 
+            if joysticks[0].get_axis (1) > 0 and not self.dino_jump:
+                self.dino_duck = False      
+                self.dino_run = False      
+                self.dino_jump = True      
+            elif joysticks[0].get_axis (1) < 0 and not self.dino_jump:
+                self.dino_duck = True      
+                self.dino_run = False      
+                self.dino_jump = False      
+            elif not (self.dino_jump or joysticks[0].get_axis (1) < 0):      
+                self.dino_duck = False      
+                self.dino_run = True      
+                self.dino_jump = False    
 
     def duck(self):
         self.image = self.duck_img[self.step_index // 5]
